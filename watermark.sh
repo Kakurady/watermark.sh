@@ -25,14 +25,14 @@ do
 	rm "${f%.*}.tga" 
 	
 	#composite watermarked image
-	composite -gravity southeast -geometry +32+32 "$WATERMARK" "$f" "${f%.*}.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quality 70 -targa -outfile "watermarked/${f%.*}.jpg" "${f%.*}.tga" 
+	composite -gravity southeast -geometry +32+32 "$WATERMARK" "$f" "${f%.*}_watermarked.tga"
+	~/Downloads/mozjpeg/build/cjpeg -quality 70 -targa -outfile "watermarked/${f%.*}.jpg" "${f%.*}_watermarked.tga" 
 	
 	#shrink down watermarked image
-	convert "${f%.*}.tga" -gamma .45455 -resize 960x720 -gamma 2.2 "resized/${f%.*}.tga" 
-	rm "${f%.*}.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quality 85 -targa -outfile "resized/${f%.*}.jpg" "resized/${f%.*}.tga" 
-	rm "resized/${f%.*}.tga"
+	convert "${f%.*}_watermarked.tga" -gamma .45455 -resize 960x720 -gamma 2.2 "resized/${f%.*}_resized.tga" 
+	rm "${f%.*}_watermarked.tga"
+	~/Downloads/mozjpeg/build/cjpeg -quality 85 -targa -outfile "resized/${f%.*}.jpg" "resized/${f%.*}_resized.tga" 
+	rm "resized/${f%.*}_resized.tga"
 	
 	#add exif tags
 	exiftool -tagsFromFile "$f" -overwrite_original "${f%.*}.jpg" "resized/${f%.*}.jpg" "watermarked/${f%.*}.jpg"
