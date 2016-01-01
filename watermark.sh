@@ -16,26 +16,31 @@ if [ ! -d resized ]
 then
 	mkdir resized
 fi
-for f in *.tif
-do
-	echo "working on $f"
+
+doIt() {
+	echo "working on $1"
 	#convert full-sized image
-	convert $f "${f%.*}.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quality 90 -targa -outfile "${f%.*}.jpg" "${f%.*}.tga"
-	rm "${f%.*}.tga" 
+	convert $1 "${1%.*}.tga"
+	~/Downloads/mozjpeg/build/cjpeg -quality 90 -targa -outfile "${1%.*}.jpg" "${1%.*}.tga"
+	rm "${1%.*}.tga" 
 	
 	#composite watermarked image
-	composite -gravity southeast -geometry +32+32 "$WATERMARK" "$f" "${f%.*}_watermarked.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quality 70 -targa -outfile "watermarked/${f%.*}.jpg" "${f%.*}_watermarked.tga" 
+	composite -gravity southeast -geometry +32+32 "$WATERMARK" "$1" "${1%.*}_watermarked.tga"
+	~/Downloads/mozjpeg/build/cjpeg -quality 70 -targa -outfile "watermarked/${1%.*}.jpg" "${1%.*}_watermarked.tga" 
 	
 	#shrink down watermarked image
-	convert "${f%.*}_watermarked.tga" -gamma .45455 -resize 960x720 -gamma 2.2 "resized/${f%.*}_resized.tga" 
-	rm "${f%.*}_watermarked.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quality 85 -targa -outfile "resized/${f%.*}.jpg" "resized/${f%.*}_resized.tga" 
-	rm "resized/${f%.*}_resized.tga"
+	convert "${1%.*}_watermarked.tga" -gamma .45455 -resize 960x720 -gamma 2.2 "resized/${1%.*}_resized.tga" 
+	rm "${1%.*}_watermarked.tga"
+	~/Downloads/mozjpeg/build/cjpeg -quality 85 -targa -outfile "resized/${1%.*}.jpg" "resized/${1%.*}_resized.tga" 
+	rm "resized/${1%.*}_resized.tga"
 	
 	#add exif tags
-	exiftool -tagsFromFile "$f" -overwrite_original "${f%.*}.jpg" "resized/${f%.*}.jpg" "watermarked/${f%.*}.jpg"
-	mv "$f.out.pp3" "${f%.*}.jpg.out.pp3"
-	rm $f
+	exiftool -tagsFromFile "$1" -overwrite_original "${1%.*}.jpg" "resized/${1%.*}.jpg" "watermarked/${1%.*}.jpg"
+	mv "$1.out.pp3" "${1%.*}.jpg.out.pp3"
+	rm $1
+}
+
+for f in *.tif
+do
+	doIt $f
 done
