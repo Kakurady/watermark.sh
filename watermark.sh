@@ -43,4 +43,4 @@ doIt() {
 #for f in *.tif; do doIt $f; done
 export -f doIt
 export WATERMARK
-parallel doIt ::: *.tif
+parallel --bar doIt ::: *.tif
