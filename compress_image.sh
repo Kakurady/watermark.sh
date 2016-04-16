@@ -32,7 +32,7 @@ doIt() {
 	rm $1
 }
 
-for f in *.tif
-do
-	doIt $f
-done
+#for f in *.tif; do doIt $f; done
+export -f doIt
+#export WATERMARK
+parallel --bar doIt ::: *.tif
