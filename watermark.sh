@@ -1,7 +1,7 @@
 #! /bin/bash
 
 
-# constants
+## constants ##
 WATERMARK=/home/kakurady/works/2015/watermark_nekotoba2.png
 
 USAGE_CMDLINE="Usage: $0 [-gk] files ..."
@@ -11,7 +11,7 @@ USAGE="$USAGE_CMDLINE
     -k      keep original file
 "
 
-#variables
+## variables ##
 keep_original=""
 gravity="southeast"
 
@@ -47,6 +47,7 @@ then
 	mkdir resized
 fi
 
+# Remember to export variables for parallel
 doIt() {
 	echo "working on $1"
 	#convert full-sized image

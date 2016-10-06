@@ -68,7 +68,7 @@ doIt() {
 	fi
 
 	mv "$1.out.pp3" "${1%.*}.jpg.out.pp3"
-    if [ ! ("$keep_original" -o "$original_is_jpg") ]
+    if [ ! "$keep_original" -o "$original_is_jpg" ]
     then
     	rm $1
     else 
