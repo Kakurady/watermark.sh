@@ -51,7 +51,7 @@ fi
 doIt() {
 	echo "working on $1"
 	#convert full-sized image
-	convert $1 "${1%.*}.tga"
+	convert "$1" "${1%.*}.tga"
 	~/Downloads/mozjpeg/build/cjpeg -quality 92 -targa -outfile "${1%.*}.jpg" "${1%.*}.tga"
 	rm "${1%.*}.tga" 
 	

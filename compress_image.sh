@@ -42,7 +42,7 @@ doIt() {
 
 	echo "working on $1"
 	#convert full-sized image
-	convert $1 "${1%.*}.tga"
+	convert "$1" "${1%.*}.tga"
 	if [ ! "$original_is_jpg" ]
 	then
     	~/Downloads/mozjpeg/build/cjpeg -quality 90 -targa -outfile "${1%.*}.jpg" "${1%.*}.tga"
