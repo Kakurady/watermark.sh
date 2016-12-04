@@ -66,7 +66,7 @@ doIt() {
 	rm "resized/${1%.*}_resized.tga"
 	
 	#add exif tags
-	exiftool -tagsFromFile "$1" -overwrite_original "${1%.*}.jpg" "resized/${1%.*}.jpg" "watermarked/${1%.*}.jpg"
+	exiftool -tagsFromFile "$1" --Olympus:all --Nikon:all -overwrite_original "${1%.*}.jpg" "resized/${1%.*}.jpg" "watermarked/${1%.*}.jpg"
 	if [ -f "$1.out.pp3" ]
 	then
     	mv "$1.out.pp3" "${1%.*}.jpg.out.pp3"

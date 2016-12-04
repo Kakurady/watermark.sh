@@ -62,9 +62,9 @@ doIt() {
 	#add exif tags
 	if [ "$original_is_jpg" ]
 	then
-        exiftool -tagsFromFile "$1" -overwrite_original "resized/${1%.*}.jpg" "watermarked/${1%.*}.jpg"
+        exiftool -tagsFromFile "$1" --Olympus:all --Nikon:all -overwrite_original "resized/${1%.*}.jpg" "watermarked/${1%.*}.jpg"
 	else 
-    	exiftool -tagsFromFile "$1" -overwrite_original "${1%.*}.jpg" "resized/${1%.*}.jpg" "watermarked/${1%.*}.jpg"
+    	exiftool -tagsFromFile "$1" --Olympus:all --Nikon:all -overwrite_original "${1%.*}.jpg" "resized/${1%.*}.jpg" "watermarked/${1%.*}.jpg"
 	fi
 
 	mv "$1.out.pp3" "${1%.*}.jpg.out.pp3"
