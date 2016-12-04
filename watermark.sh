@@ -4,6 +4,11 @@
 ## constants ##
 WATERMARK=/home/kakurady/works/2015/watermark_nekotoba2.png
 
+CJPEG=/home/kakurady/apps/mozjpeg/bin/cjpeg
+COMPOSITE=composite
+CONVERT=convert
+EXIFTOOL=exiftool
+
 USAGE_CMDLINE="Usage: $0 [-gk] files ..."
 
 USAGE="$USAGE_CMDLINE
@@ -51,22 +56,22 @@ fi
 doIt() {
 	echo "working on $1"
 	#convert full-sized image
-	convert "$1" "${1%.*}.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quant-table 0 -quality 95 -targa -outfile "${1%.*}.jpg" "${1%.*}.tga"
+	$CONVERT "$1" "${1%.*}.tga"
+	$CJPEG -quant-table 0 -quality 95 -targa -outfile "${1%.*}.jpg" "${1%.*}.tga"
 	rm "${1%.*}.tga" 
 	
 	#composite watermarked image
-	composite -gravity $gravity -geometry +32+32 "$WATERMARK" "$1" "${1%.*}_watermarked.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quality 70 -quant-table 2 -targa -outfile "watermarked/${1%.*}.jpg" "${1%.*}_watermarked.tga" 
+	$COMPOSITE -gravity $gravity -geometry +32+32 "$WATERMARK" "$1" "${1%.*}_watermarked.tga"
+	$CJPEG -quality 70 -quant-table 2 -targa -outfile "watermarked/${1%.*}.jpg" "${1%.*}_watermarked.tga" 
 	
 	#shrink down watermarked image
-	convert "${1%.*}_watermarked.tga" -gamma .45455 -resize 1200x960 -gamma 2.2 "resized/${1%.*}_resized.tga" 
+	$CONVERT "${1%.*}_watermarked.tga" -gamma .45455 -resize 1200x960 -gamma 2.2 "resized/${1%.*}_resized.tga" 
 	rm "${1%.*}_watermarked.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quant-table 0 -quality 96 -baseline -targa -outfile "resized/${1%.*}.jpg" "resized/${1%.*}_resized.tga" 
+	$CJPEG -quant-table 0 -quality 96 -targa -baseline -outfile "resized/${1%.*}.jpg" "resized/${1%.*}_resized.tga" 
 	rm "resized/${1%.*}_resized.tga"
 	
 	#add exif tags
-	exiftool -tagsFromFile "$1" --Olympus:all --Nikon:all -overwrite_original "${1%.*}.jpg" "resized/${1%.*}.jpg" "watermarked/${1%.*}.jpg"
+	$EXIFTOOL -tagsFromFile "$1" --Olympus:all --Nikon:all -overwrite_original "${1%.*}.jpg" "resized/${1%.*}.jpg" "watermarked/${1%.*}.jpg"
 	if [ -f "$1.out.pp3" ]
 	then
     	mv "$1.out.pp3" "${1%.*}.jpg.out.pp3"
@@ -82,7 +87,12 @@ doIt() {
 
 #for f in *.tif; do doIt $f; done
 export -f doIt
+export CJPEG
+export COMPOSITE
+export CONVERT
+export EXIFTOOL
 export WATERMARK
 export keep_original
 export gravity
+
 parallel --bar doIt ::: "$@"
