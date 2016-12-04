@@ -52,17 +52,17 @@ doIt() {
 	echo "working on $1"
 	#convert full-sized image
 	convert "$1" "${1%.*}.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quality 92 -targa -outfile "${1%.*}.jpg" "${1%.*}.tga"
+	~/Downloads/mozjpeg/build/cjpeg -quant-table 0 -quality 95 -targa -outfile "${1%.*}.jpg" "${1%.*}.tga"
 	rm "${1%.*}.tga" 
 	
 	#composite watermarked image
 	composite -gravity $gravity -geometry +32+32 "$WATERMARK" "$1" "${1%.*}_watermarked.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quality 70 -targa -outfile "watermarked/${1%.*}.jpg" "${1%.*}_watermarked.tga" 
+	~/Downloads/mozjpeg/build/cjpeg -quality 70 -quant-table 2 -targa -outfile "watermarked/${1%.*}.jpg" "${1%.*}_watermarked.tga" 
 	
 	#shrink down watermarked image
-	convert "${1%.*}_watermarked.tga" -gamma .45455 -resize 960x720 -gamma 2.2 "resized/${1%.*}_resized.tga" 
+	convert "${1%.*}_watermarked.tga" -gamma .45455 -resize 1200x960 -gamma 2.2 "resized/${1%.*}_resized.tga" 
 	rm "${1%.*}_watermarked.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quality 85 -targa -outfile "resized/${1%.*}.jpg" "resized/${1%.*}_resized.tga" 
+	~/Downloads/mozjpeg/build/cjpeg -quant-table 0 -quality 96 -baseline -targa -outfile "resized/${1%.*}.jpg" "resized/${1%.*}_resized.tga" 
 	rm "resized/${1%.*}_resized.tga"
 	
 	#add exif tags
