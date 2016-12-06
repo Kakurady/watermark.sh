@@ -24,11 +24,11 @@ then
     exit 1
 fi
 
-if [ ! -d watermarked ] 
+if [ ! -d watermarked ]
 then
 	mkdir watermarked
 fi
-if [ ! -d resized ] 
+if [ ! -d resized ]
 then
 	mkdir resized
 fi
@@ -47,23 +47,23 @@ doIt() {
 	then
     	~/Downloads/mozjpeg/build/cjpeg -quality 90 -targa -outfile "${1%.*}.jpg" "${1%.*}.tga"
 	fi
-	#rm "${1%.*}.tga" 
+	#rm "${1%.*}.tga"
 	
 	#composite watermarked image
 	#composite -gravity southeast -geometry +32+32 /media/kakurady/Seagate\ Backup\ Plus\ Drive/works/2015/watermark_nekotoba2.png "$1" "${1%.*}.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quality 70 -targa -outfile "watermarked/${1%.*}.jpg" "${1%.*}.tga" 
+	~/Downloads/mozjpeg/build/cjpeg -quality 70 -targa -outfile "watermarked/${1%.*}.jpg" "${1%.*}.tga"
 	
 	#shrink down watermarked image
-	convert "${1%.*}.tga" -gamma .45455 -resize 960x720 -gamma 2.2 "resized/${1%.*}.tga" 
+	convert "${1%.*}.tga" -gamma .45455 -resize 960x720 -gamma 2.2 "resized/${1%.*}.tga"
 	rm "${1%.*}.tga"
-	~/Downloads/mozjpeg/build/cjpeg -quality 85 -targa -outfile "resized/${1%.*}.jpg" "resized/${1%.*}.tga" 
+	~/Downloads/mozjpeg/build/cjpeg -quality 85 -targa -outfile "resized/${1%.*}.jpg" "resized/${1%.*}.tga"
 	rm "resized/${1%.*}.tga"
 	
 	#add exif tags
 	if [ "$original_is_jpg" ]
 	then
         exiftool -tagsFromFile "$1" --Olympus:all --Nikon:all -overwrite_original "resized/${1%.*}.jpg" "watermarked/${1%.*}.jpg"
-	else 
+	else
     	exiftool -tagsFromFile "$1" --Olympus:all --Nikon:all -overwrite_original "${1%.*}.jpg" "resized/${1%.*}.jpg" "watermarked/${1%.*}.jpg"
 	fi
 
@@ -71,7 +71,7 @@ doIt() {
     if [ ! "$keep_original" -o "$original_is_jpg" ]
     then
     	rm $1
-    else 
+    else
         true
         #echo "keep original"
 	fi
