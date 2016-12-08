@@ -51,6 +51,19 @@ if [ ! -d resized ]
 then
 	mkdir resized
 fi
+if [ ! -d resized_87_1x1 ]
+then
+	mkdir resized_87_1x1
+fi
+if [ ! -d resized_92_1x1 ]
+then
+	mkdir resized_92_1x1
+fi
+if [ ! -d resized_92_212 ]
+then
+	mkdir resized_92_212
+fi
+
 
 # Remember to export variables for parallel
 doIt() {
@@ -71,8 +84,8 @@ doIt() {
 	# quality factor 70 here is arbitrary
 	#
 	# since the display is a lot denser you can get away with throwing away details ("compressive image"). (however, you can't compare quality factors between encoders with different quantization tables; comparing subjective quality at a given file size is more reasonable [JPEG files don't actually have a quality factor; you're scaling a 64-entry table on how accurately details are stored in a 8x8 block])
-	$COMPOSITE -gravity $gravity -geometry +32+32 "$WATERMARK" "$1" "${1%.*}_watermarked.tga"
-	$CJPEG -quality 70 -quant-table 2 -targa -outfile "watermarked/${1%.*}.jpg" "${1%.*}_watermarked.tga"
+	$COMPOSITE -gravity $gravity -geometry +32+32 "$WATERMARK" "$1" "watermarked/${1%.*}_watermarked.tga"
+	$CJPEG -quality 70 -quant-table 2 -targa -outfile "watermarked/${1%.*}.jpg" "watermarked/${1%.*}_watermarked.tga"
 	
 	# shrink down watermarked image
 	#
@@ -86,9 +99,15 @@ doIt() {
 	# but I can't tell differences after looking at too many photos
 	# quant table 2 was personal pref; no discernable difference from
 	# table 0 at the same quality factor
-	$CONVERT "${1%.*}_watermarked.tga" -gamma .45455 -resize 1200x960 -gamma 2.2 "resized/${1%.*}_resized.tga"
-	rm "${1%.*}_watermarked.tga"
-	$CJPEG -quant-table 2 -quality 92.5 -targa -baseline -outfile "resized/${1%.*}.jpg" "resized/${1%.*}_resized.tga"
+	$CONVERT "watermarked/${1%.*}_watermarked.tga" -gamma .45455 -resize 1200x960 -gamma 2.2 "resized/${1%.*}_resized.tga"
+	rm "watermarked/${1%.*}_watermarked.tga"
+	$CJPEG -quant-table 2 -quality 92.5 -targa -outfile "resized/${1%.*}.jpg" "resized/${1%.*}_resized.tga"
+	
+	#test subsampling modes
+	$CJPEG -quant-table 2 -quality 87 -sample 1x1 -targa -outfile "resized_87_1x1/${1%.*}.jpg" "resized/${1%.*}_resized.tga"
+	$CJPEG -quant-table 2 -quality 92.5 -sample 1x1 -targa -outfile "resized_92_1x1/${1%.*}.jpg" "resized/${1%.*}_resized.tga"
+	$CJPEG -quant-table 2 -quality 92.5 -sample 2x2,1x1,2x2 -targa -outfile "resized_92_212/${1%.*}.jpg" "resized/${1%.*}_resized.tga"
+	
 	rm "resized/${1%.*}_resized.tga"
 	
 	#add exif tags
