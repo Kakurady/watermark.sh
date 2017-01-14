@@ -3,7 +3,7 @@
 
 ## constants ##
 WATERMARK=/home/kakurady/works/2015/watermark_nekotoba2.png
-CUSTOM_QTABLE=/home/kakurady/dev/watermark_images/qtbl_Peterson93.txt
+CUSTOM_QTABLE=/home/kakurady/dev/watermark_images/qtbl_Peterson93.txt # optional
 
 CJPEG=/home/kakurady/apps/mozjpeg/bin/cjpeg
 COMPOSITE=composite
@@ -126,8 +126,11 @@ doIt() {
 	#test subsampling modes
 	$CJPEG -quant-table 2 -quality 87 -sample 1x1 -targa -outfile "resized_87_1x1/${1%.*}_1.jpg" "resized/${1%.*}_resized.tga"
 	$CJPEG -quant-table 2 -quality 92.5 -sample 2x2,1x1,2x2 -targa -outfile "resized_92_212/${1%.*}_2.jpg" "resized/${1%.*}_resized.tga"
-	$CJPEG -quality 90 -qtables "$CUSTOM_QTABLE" -qslots 0,1,2 -sample 1x1 -targa -outfile "resized_92_p93/${1%.*}_p.jpg" "resized/${1%.*}_resized.tga"
-	$CJPEG -quality 87 -qtables "$CUSTOM_QTABLE" -qslots 0,1,2 -sample 1x1 -targa -outfile "resized_92_p87/${1%.*}_q.jpg" "resized/${1%.*}_resized.tga"
+	if [ ! -f "$CUSTOM_QTABLE" ]
+	then
+		$CJPEG -quality 90 -qtables "$CUSTOM_QTABLE" -qslots 0,1,2 -sample 1x1 -targa -outfile "resized_92_p93/${1%.*}_p.jpg" "resized/${1%.*}_resized.tga"
+		$CJPEG -quality 87 -qtables "$CUSTOM_QTABLE" -qslots 0,1,2 -sample 1x1 -targa -outfile "resized_92_p87/${1%.*}_q.jpg" "resized/${1%.*}_resized.tga"
+	fi
     	
     convert "resized/${1%.*}_resized.tga" "resized/${1%.*}_resized.png" 
     report_ssim "resized/${1%.*}_resized.png" "resized/${1%.*}_medium.jpg" "resized_87_1x1/${1%.*}_1.jpg" "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
