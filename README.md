@@ -10,3 +10,4 @@ For now, the program paths are hardcoded for my own use.
 - imagemagick (_don't put untrusted images through this script_)
 - exiftool
 - GNU parallel (I'm not sure if its startup message is even meaningful for a GPL licensed software...)
+- dssim, compiled with USE_LIBJPEG=true
