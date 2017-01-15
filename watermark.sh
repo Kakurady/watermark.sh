@@ -93,19 +93,23 @@ doIt() {
 	#
 	# this is an "archival" quality image suitable for printing
 	# saved at an arbitrary 95 quality factor
-	$CONVERT "$1" "${1%.*}.tga"
-	$CJPEG -quant-table 2 -quality 95 -targa -outfile "${1%.*}.jpg" "${1%.*}.tga"
-	rm "${1%.*}.tga"
+	#
+	# Using PNG as intermediate format to preserve color space info
+	# PNG "quality" 3 means Huffman only, "average" filtering 
+	# ( https://www.imagemagick.org/script/command-line-options.php#quality )
+	$CONVERT -quality 3 "$1" "${1%.*}.png"
+	$CJPEG -quant-table 2 -quality 95 -outfile "${1%.*}.jpg" "${1%.*}.png"
+	rm "${1%.*}.png"
 	
 	#composite watermarked image
 	#
 	# this image is uploaded to Flickr / Weasyl, which will scale it down
 	# also suitable for display on a 2x1080p / UHD display
-	# quality factor 70 here is arbitrary
+	# JPEG quality factor 70 here is arbitrary
 	#
 	# since the display is a lot denser you can get away with throwing away details ("compressive image"). (however, you can't compare quality factors between encoders with different quantization tables; comparing subjective quality at a given file size is more reasonable [JPEG files don't actually have a quality factor; you're scaling a 64-entry table on how accurately details are stored in a 8x8 block])
-	$COMPOSITE -gravity $gravity -geometry +32+32 "$WATERMARK" "$1" "watermarked/${1%.*}_watermarked.tga"
-	$CJPEG -quality 70 -quant-table 2 -targa -outfile "watermarked/${1%.*}_large.jpg" "watermarked/${1%.*}_watermarked.tga"
+	$COMPOSITE -gravity $gravity -geometry +32+32 -quality 3 "$WATERMARK" "$1" "watermarked/${1%.*}_watermarked.png"
+	$CJPEG -quality 70 -quant-table 2 -outfile "watermarked/${1%.*}_large.jpg" "watermarked/${1%.*}_watermarked.png"
 	
 	# shrink down watermarked image
 	#
@@ -119,22 +123,22 @@ doIt() {
 	# but I can't tell differences after looking at too many photos
 	# quant table 2 was personal pref; no discernable difference from
 	# table 0 at the same quality factor
-	$CONVERT "watermarked/${1%.*}_watermarked.tga" -gamma .45455 -resize 1200x960 -gamma 2.2 "resized/${1%.*}_resized.tga"
-	rm "watermarked/${1%.*}_watermarked.tga"
-	$CJPEG -quant-table 2 -quality 92.5 -targa -outfile "resized/${1%.*}_medium.jpg" "resized/${1%.*}_resized.tga"
+	$CONVERT "watermarked/${1%.*}_watermarked.png" -gamma .45455 -resize 1200x960 -gamma 2.2 -quality 3 "resized/${1%.*}_resized.png"
+	rm "watermarked/${1%.*}_watermarked.png"
+	$CJPEG -quant-table 2 -quality 92.5 -outfile "resized/${1%.*}_medium.jpg" "resized/${1%.*}_resized.png"
 	
 	#test subsampling modes
-	$CJPEG -quant-table 2 -quality 87 -sample 1x1 -targa -outfile "resized_87_1x1/${1%.*}_1.jpg" "resized/${1%.*}_resized.tga"
-	$CJPEG -quant-table 2 -quality 92.5 -sample 2x2,1x1,2x2 -targa -outfile "resized_92_212/${1%.*}_2.jpg" "resized/${1%.*}_resized.tga"
+	$CJPEG -quant-table 2 -quality 87 -sample 1x1 -outfile "resized_87_1x1/${1%.*}_1.jpg" "resized/${1%.*}_resized.png"
+	$CJPEG -quant-table 2 -quality 92.5 -sample 2x2,1x1,2x2 -outfile "resized_92_212/${1%.*}_2.jpg" "resized/${1%.*}_resized.png"
 	if [ ! -f "$CUSTOM_QTABLE" ]
 	then
-		$CJPEG -quality 90 -qtables "$CUSTOM_QTABLE" -qslots 0,1,2 -sample 1x1 -targa -outfile "resized_92_p93/${1%.*}_p.jpg" "resized/${1%.*}_resized.tga"
-		$CJPEG -quality 87 -qtables "$CUSTOM_QTABLE" -qslots 0,1,2 -sample 1x1 -targa -outfile "resized_92_p87/${1%.*}_q.jpg" "resized/${1%.*}_resized.tga"
+		$CJPEG -quality 90 -qtables "$CUSTOM_QTABLE" -qslots 0,1,2 -sample 1x1 -outfile "resized_92_p93/${1%.*}_p.jpg" "resized/${1%.*}_resized.png"
+		$CJPEG -quality 87 -qtables "$CUSTOM_QTABLE" -qslots 0,1,2 -sample 1x1 -outfile "resized_92_p87/${1%.*}_q.jpg" "resized/${1%.*}_resized.png"
 	fi
     	
-    convert "resized/${1%.*}_resized.tga" "resized/${1%.*}_resized.png" 
+    #convert "resized/${1%.*}_resized.png" "resized/${1%.*}_resized.png"
     report_ssim "resized/${1%.*}_resized.png" "resized/${1%.*}_medium.jpg" "resized_87_1x1/${1%.*}_1.jpg" "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
-	rm "resized/${1%.*}_resized.tga" "resized/${1%.*}_resized.png"
+	rm "resized/${1%.*}_resized.png" #"resized/${1%.*}_resized.png"
 	
 	#add exif tags
 	#
