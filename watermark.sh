@@ -130,7 +130,7 @@ doIt() {
 	#test subsampling modes
 	$CJPEG -quant-table 2 -quality 87 -sample 1x1 -outfile "resized_87_1x1/${1%.*}_1.jpg" "resized/${1%.*}_resized.png"
 	$CJPEG -quant-table 2 -quality 92.5 -sample 2x2,1x1,2x2 -outfile "resized_92_212/${1%.*}_2.jpg" "resized/${1%.*}_resized.png"
-	if [ ! -f "$CUSTOM_QTABLE" ]
+	if [ -f "$CUSTOM_QTABLE" ]
 	then
 		$CJPEG -quality 90 -qtables "$CUSTOM_QTABLE" -qslots 0,1,2 -sample 1x1 -outfile "resized_92_p93/${1%.*}_p.jpg" "resized/${1%.*}_resized.png"
 		$CJPEG -quality 87 -qtables "$CUSTOM_QTABLE" -qslots 0,1,2 -sample 1x1 -outfile "resized_92_p87/${1%.*}_q.jpg" "resized/${1%.*}_resized.png"
