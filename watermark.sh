@@ -2,7 +2,7 @@
 
 
 ## constants ##
-WATERMARK=/home/kakurady/works/2015/watermark_nekotoba2.png
+WATERMARK=/home/kakurady/works/2017/kakurady_lettering_watermark.png
 CUSTOM_QTABLE=/home/kakurady/dev/watermark_images/qtbl_Peterson93.txt # optional
 
 CJPEG=/home/kakurady/apps/mozjpeg/bin/cjpeg
