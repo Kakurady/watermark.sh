@@ -11,23 +11,27 @@ CONVERT=convert
 DSSIM=/home/kakurady/Downloads/dssim/bin/dssim
 EXIFTOOL=exiftool
 PARALLEL=parallel
+parallel_params="--bar --ungroup --load 95%"
 
 USAGE_CMDLINE="Usage: $0 [-gk] files ..."
 
 USAGE="$USAGE_CMDLINE
     -g      set gravity
     -k      keep original file
+    -s      report DSSIM
 "
 
 ## variables ##
 keep_original=""
+report_dssim=""
 gravity="southeast"
 
-while getopts g:k f
+while getopts g:k option_name
 do
-    case $f in
+    case $option_name in
     g)      gravity=$OPTARG;;
     k)      keep_original="y";;
+    s)      report_dssim="y";;
     \?)     echo "$USAGE"; exit 1;;
     esac
 done
@@ -137,7 +141,11 @@ doIt() {
 	fi
     	
     #convert "resized/${1%.*}_resized.png" "resized/${1%.*}_resized.png"
-    report_ssim "resized/${1%.*}_resized.png" "resized/${1%.*}_medium.jpg" "resized_87_1x1/${1%.*}_1.jpg" "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
+    if [ "$report_dssim" -a -f "$DSSIM" ]
+    then
+        report_ssim "resized/${1%.*}_resized.png" "resized/${1%.*}_medium.jpg" "resized_87_1x1/${1%.*}_1.jpg" "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
+    fi
+
 	rm "resized/${1%.*}_resized.png" #"resized/${1%.*}_resized.png"
 	
 	#add exif tags
@@ -173,6 +181,6 @@ export WATERMARK
 export keep_original
 export gravity
 
-$PARALLEL --bar doIt ::: "$@"
+$PARALLEL $parallel_params doIt ::: "$@"
 cat resized/*.report.txt >> resized/report_summary.txt
 rm resized/*.report.txt
