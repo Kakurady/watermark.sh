@@ -30,5 +30,10 @@ doIt() {
     # this will keep color space info. Will also keep thumbnails.
     $JPEGTRAN -copy all -outfile "$outfile" "$1"
 }
+while [ "$1" ]
+do
+    echo $1
+    doIt "$1"
+    shift
+done
 
-for f in $@; do doIt $f; done
