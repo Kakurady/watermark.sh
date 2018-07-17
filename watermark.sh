@@ -165,7 +165,17 @@ doIt() {
 	#
 	#May need to add color space if not sRGB. However, that bloats image (by 6kb)
 	#if only we could insert the PNG built-in sRGB chunk from RawTherapee?
-	$EXIFTOOL -use MWG -tagsFromFile "$1" --Olympus:all --Nikon:all -all -icc_profile -overwrite_original -z "${1%.*}.jpg" "resized/${1%.*}_medium.jpg" "watermarked/${1%.*}_large.jpg" # "resized_87_1x1/${1%.*}_1.jpg"  "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
+	$EXIFTOOL \
+	-use MWG \
+	-tagsFromFile "$1" \
+	-icc_profile \
+	-all \
+	-exif:serialnumber= -exif:lensserialnumber= \
+	-MakerNotes:all= \
+	-overwrite_original \
+	-z \
+	"${1%.*}.jpg" "resized/${1%.*}_medium.jpg" "watermarked/${1%.*}_large.jpg"
+	# "resized_87_1x1/${1%.*}_1.jpg"  "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
 	
 	#move RawTherapee sidecar file, if one exist
 	if [ -f "$1.out.pp3" ]
