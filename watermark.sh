@@ -114,8 +114,8 @@ doIt() {
 	# Using PNG as intermediate format to preserve color space info
 	# PNG "quality" 3 means Huffman only, "average" filtering 
 	# ( https://www.imagemagick.org/script/command-line-options.php#quality )
-	$CONVERT -quality 3 "$1" "${1%.*}.png"
-	$CJPEG -quant-table 2 -quality 95 -outfile "${1%.*}.jpg" "${1%.*}.png"
+	$CONVERT -quality 3 "$1" "${1%.*}.temp.png"
+	$CJPEG -quant-table 2 -quality 95 -fastcrush -outfile "${1%.*}.jpg" "${1%.*}.temp.png"
 
 	
 	#composite watermarked image
@@ -128,10 +128,10 @@ doIt() {
 	if [ "$do_watermark" ]
 	then
 	    watermarked_image="watermarked/${1%.*}_watermarked.png"
-    	$COMPOSITE -gravity $gravity -geometry +4+4 -quality 3 "$WATERMARK" "${1%.*}.png" "$watermarked_image"
-    	rm "${1%.*}.png"
+	    $COMPOSITE -gravity $gravity -geometry +4+4 -quality 3 "$WATERMARK" "${1%.*}.temp.png" "$watermarked_image"
+	    rm "${1%.*}.temp.png"
 	else
-	    watermarked_image="${1%.*}.png"
+	    watermarked_image="${1%.*}.temp.png"
 	fi
 
 	$CJPEG -quality 70 -quant-table 2 -outfile "watermarked/${1%.*}_large.jpg" "$watermarked_image"
