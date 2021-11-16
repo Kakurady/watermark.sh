@@ -73,13 +73,16 @@ if [ ! -d resized_92_212 ]
 then
 	mkdir resized_92_212
 fi
-if [ ! -d resized_92_p93 ]
+if [ -f "$CUSTOM_QTABLE" ]
 then
-	mkdir resized_92_p93
-fi
-if [ ! -d resized_92_p87 ]
-then
-	mkdir resized_92_p87
+	if [ ! -d resized_92_p93 ]
+	then
+		mkdir resized_92_p93
+	fi
+	if [ ! -d resized_92_p87 ]
+	then
+		mkdir resized_92_p87
+	fi
 fi
 
 report_ssim() {
