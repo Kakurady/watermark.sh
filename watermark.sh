@@ -11,6 +11,7 @@ CONVERT=convert
 DSSIM=/home/kakurady/Downloads/dssim/bin/dssim
 EXIFTOOL=exiftool
 PARALLEL=parallel
+CWEBP=cwebp
 parallel_params="--bar --ungroup --load 95%"
 
 USAGE_CMDLINE="Usage: $0 [-gwks] files ..."
@@ -56,6 +57,10 @@ fi
 if [ ! -d watermarked ]
 then
 	mkdir watermarked
+fi
+if [ ! -d webp ]
+then
+	mkdir webp
 fi
 if [ ! -d resized ]
 then
@@ -164,6 +169,9 @@ doIt() {
 
 	rm "watermarked/${1%.*}_resized.png" #"resized/${1%.*}_resized.png"
 	
+#	$CWEBP -lossless -z 6 -metadata all -o "webp/${1%.*}.webp" -- "$1"
+	$CWEBP -near_lossless 80 -z 6 -metadata all -o "webp/${1%.*}_80.webp" -- "$1"
+
 	#add exif tags
 	#
 	#May need to add color space if not sRGB. However, that bloats image (by 6kb)
@@ -196,6 +204,7 @@ export DSSIM
 export EXIFTOOL
 export CUSTOM_QTABLE
 export WATERMARK
+export CWEBP
 export keep_original
 export gravity
 export do_watermark
