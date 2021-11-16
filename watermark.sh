@@ -188,7 +188,7 @@ doIt() {
     # delete the original file
     if [ ! "$keep_original" ]
     then
-    	rm $1
+    	rm "$1"
     else
         true
 	fi
