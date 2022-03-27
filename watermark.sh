@@ -112,9 +112,8 @@ doIt() {
 	# saved at an arbitrary 95 quality factor
 	#
 	# Using PNG as intermediate format to preserve color space info
-	# PNG "quality" 3 means Huffman only, "average" filtering 
-	# ( https://www.imagemagick.org/script/command-line-options.php#quality )
-	$CONVERT -quality 3 "$1" "${1%.*}.temp.png"
+	# PNG "quality" 14 means zlib compress 1 + Paeth filtering
+	$CONVERT -quality 14 "$1" "${1%.*}.temp.png"
 	$CJPEG -quant-table 2 -quality 95 -fastcrush -outfile "${1%.*}.jpg" "${1%.*}.temp.png"
 
 	
