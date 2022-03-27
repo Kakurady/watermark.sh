@@ -68,18 +68,6 @@ if [ ! -d resized ]
 then
 	mkdir resized
 fi
-if [ ! -d resized_87_1x1 ]
-then
-	mkdir resized_87_1x1
-fi
-if [ ! -d resized_92_1x1 ]
-then
-	mkdir resized_92_1x1
-fi
-if [ ! -d resized_92_212 ]
-then
-	mkdir resized_92_212
-fi
 if [ -f "$CUSTOM_QTABLE" ]
 then
 	if [ ! -d resized_92_p93 ]
@@ -214,5 +202,5 @@ export EARGFILES
 export IPTC2PNGARGS
 
 $PARALLEL $parallel_params doIt ::: "$@"
-cat resized/*.report.txt >> resized/report_summary.txt
-rm resized/*.report.txt
+# cat resized/*.report.txt >> resized/report_summary.txt
+# rm resized/*.report.txt
