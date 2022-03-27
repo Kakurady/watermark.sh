@@ -169,8 +169,6 @@ doIt() {
 
 	rm "watermarked/${1%.*}_resized.png" #"resized/${1%.*}_resized.png"
 	
-#	$CWEBP -lossless -z 6 -metadata all -o "webp/${1%.*}.webp" -- "$1"
-	$CWEBP -near_lossless 80 -z 6 -metadata all -o "webp/${1%.*}_80.webp" -- "$1"
 
 	#add exif tags
 	#
@@ -179,6 +177,8 @@ doIt() {
 	$EXIFTOOL -use MWG -charset iptc=UTF8 -tagsFromFile "$1" -icc_profile -z -all -exif:serialnumber= -exif:lensserialnumber= -MakerNotes:all= -overwrite_original "${1%.*}.jpg" "watermarked/${1%.*}_medium.jpg" "watermarked/${1%.*}_large.jpg"
 	# "resized_87_1x1/${1%.*}_1.jpg"  "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
 	
+#	$CWEBP -lossless -z 6 -metadata all -o "webp/${1%.*}.webp" -- "$1"
+	$CWEBP -near_lossless 80 -z 4 -metadata all -o "webp/${1%.*}_80.webp" -- "$1"
 	#move RawTherapee sidecar file, if one exist
 	if [ -f "$1.out.pp3" ]
 	then
