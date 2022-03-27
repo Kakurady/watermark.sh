@@ -176,7 +176,7 @@ doIt() {
 	#
 	#May need to add color space if not sRGB. However, that bloats image (by 6kb)
 	#if only we could insert the PNG built-in sRGB chunk from RawTherapee?
-	$EXIFTOOL -use MWG -charset iptc=UTF8 -tagsFromFile "$1" -icc_profile -z -all -exif:serialnumber= -exif:lensserialnumber= -MakerNotes:all= -overwrite_original "${1%.*}.jpg" "watermarked/${1%.*}_medium.jpg" "watermarked/${1%.*}_large.jpg"
+	$EXIFTOOL -ignoreMinorErrors -use MWG -charset iptc=UTF8 -tagsFromFile "$1" -icc_profile -all -exif:serialnumber= -exif:lensserialnumber= -MakerNotes:all= -overwrite_original "${1%.*}.jpg" "watermarked/${1%.*}_medium.jpg" "watermarked/${1%.*}_large.jpg"
 	# "resized_87_1x1/${1%.*}_1.jpg"  "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
 	
 #	$CWEBP -lossless -z 6 -metadata all -o "webp/${1%.*}.webp" -- "$1"
