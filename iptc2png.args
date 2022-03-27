@@ -1,0 +1,6 @@
+-PNG:Title < IPTC:ObjectName
+-PNG:Title < IPTC:Headline
+-PNG:Author < IPTC:By-line
+-PNG:Description < IPTC:Caption-Abstract
+-PNG:Copyright < IPTC:CopyrightNotice
+-Photoshop:IPTCDigest=new

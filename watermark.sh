@@ -10,6 +10,8 @@ COMPOSITE=composite
 CONVERT=convert
 DSSIM=/home/kakurady/Downloads/dssim/bin/dssim
 EXIFTOOL=exiftool
+EARGFILES=/usr/share/doc/libimage-exiftool-perl/arg_files/
+IPTC2PNGARGS=/home/kakurady/dev/watermark_images/iptc2png.args
 PARALLEL=parallel
 CWEBP=cwebp
 parallel_params="--bar --ungroup --load 95%"
@@ -114,6 +116,7 @@ doIt() {
 	# Using PNG as intermediate format to preserve color space info
 	# PNG "quality" 14 means zlib compress 1 + Paeth filtering
 	$CONVERT -quality 14 "$1" "${1%.*}.temp.png"
+	$EXIFTOOL -use MWG -charset iptc=UTF8 -tagsFromFile "$1" -icc_profile -charset iptc=UTF8 -tagsFromFile "$1" -exif:serialnumber= -exif:lensserialnumber= -MakerNotes:all= -overwrite_original -@ "$EARGFILES/exif2xmp.args" -@ "$EARGFILES/iptc2xmp.args" -@  "$IPTC2PNGARGS" "-XMP-dc:Title<IPTC:Healine" "$1" "${1%.*}.temp.png"
 	$CJPEG -quant-table 2 -quality 95 -fastcrush -outfile "${1%.*}.jpg" "${1%.*}.temp.png"
 
 	
@@ -207,6 +210,8 @@ export CWEBP
 export keep_original
 export gravity
 export do_watermark
+export EARGFILES
+export IPTC2PNGARGS
 
 $PARALLEL $parallel_params doIt ::: "$@"
 cat resized/*.report.txt >> resized/report_summary.txt
