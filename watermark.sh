@@ -103,6 +103,7 @@ doIt() {
 	#
 	# Using PNG as intermediate format to preserve color space info
 	# PNG "quality" 14 means zlib compress 1 + Paeth filtering
+#	identify -verbose "$1"
 	$CONVERT -quality 14 "$1" "${1%.*}.temp.png"
 #	$EXIFTOOL -use MWG -charset iptc=UTF8 -tagsFromFile "$1" -icc_profile -charset iptc=UTF8 -tagsFromFile "$1" -exif:serialnumber= -exif:lensserialnumber= -MakerNotes:all= -overwrite_original -@ "$EARGFILES/exif2xmp.args" -@ "$EARGFILES/iptc2xmp.args" -@  "$IPTC2PNGARGS" "-XMP-dc:Title<IPTC:Headline" "${1%.*}.temp.png"
 	$CJPEG -quant-table 2 -quality 97 -fastcrush -outfile "${1%.*}.jpg" "${1%.*}.temp.png"
@@ -143,7 +144,7 @@ doIt() {
 	rm "$watermarked_image"
 	$CJPEG -quant-table 2 -quality 92.5 -outfile "resized/${1%.*}_medium.jpg" "resized/${1%.*}_resized.png"
 	$CJPEG -quant-table 2 -quality 85 -outfile "resized/${1%.*}_2k.jpg" "resized/${1%.*}_2k.png"
-	
+
 	#test subsampling modes
 	#$CJPEG -quant-table 2 -quality 87 -sample 1x1 -outfile "resized_87_1x1/${1%.*}_1.jpg" "resized/${1%.*}_resized.png"
 	#$CJPEG -quant-table 2 -quality 92.5 -sample 2x2,1x1,2x2 -outfile "resized_92_212/${1%.*}_2.jpg" "resized/${1%.*}_resized.png"
@@ -166,11 +167,11 @@ doIt() {
 	#
 	#May need to add color space if not sRGB. However, that bloats image (by 6kb)
 	#if only we could insert the PNG built-in sRGB chunk from RawTherapee?
-	$EXIFTOOL -ignoreMinorErrors -use MWG -charset iptc=UTF8 -tagsFromFile "$1" -icc_profile -all -exif:serialnumber= -exif:lensserialnumber= -MakerNotes:all= -overwrite_original "${1%.*}.jpg" "resized/${1%.*}_medium.jpg" "resized/${1%.*}_2k.jpg" "watermarked/${1%.*}_large.jpg"
+	$EXIFTOOL -ignoreMinorErrors -use MWG -charset iptc=UTF8 -tagsFromFile "$1" -icc_profile -all -exif:serialnumber= -exif:lensserialnumber= "-IPTC:DateCreated<EXIF:CreateDate" -MakerNotes:all= -overwrite_original "${1%.*}.jpg" "resized/${1%.*}_medium.jpg" "resized/${1%.*}_2k.jpg" "watermarked/${1%.*}_large.jpg"
 	# "resized_87_1x1/${1%.*}_1.jpg"  "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
 	
 #	$CWEBP -lossless -z 6 -metadata all -o "webp/${1%.*}.webp" -- "$1"
-	$CWEBP -near_lossless 80 -z 4 -metadata all -o "webp/${1%.*}_80.webp" -- "$1"
+#	$CWEBP -near_lossless 80 -z 2 -metadata all -o "webp/${1%.*}_80.webp" -- "$1"
 	#move RawTherapee sidecar file, if one exist
 	if [ -f "$1.out.pp3" ]
 	then
