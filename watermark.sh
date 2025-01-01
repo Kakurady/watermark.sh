@@ -104,7 +104,7 @@ doIt() {
 	# Using PNG as intermediate format to preserve color space info
 	# PNG "quality" 14 means zlib compress 1 + Paeth filtering
 	$CONVERT -quality 14 "$1" "${1%.*}.temp.png"
-	$EXIFTOOL -use MWG -charset iptc=UTF8 -tagsFromFile "$1" -icc_profile -charset iptc=UTF8 -tagsFromFile "$1" -exif:serialnumber= -exif:lensserialnumber= -MakerNotes:all= -overwrite_original -@ "$EARGFILES/exif2xmp.args" -@ "$EARGFILES/iptc2xmp.args" -@  "$IPTC2PNGARGS" "-XMP-dc:Title<IPTC:Healine" "$1" "${1%.*}.temp.png"
+#	$EXIFTOOL -use MWG -charset iptc=UTF8 -tagsFromFile "$1" -icc_profile -charset iptc=UTF8 -tagsFromFile "$1" -exif:serialnumber= -exif:lensserialnumber= -MakerNotes:all= -overwrite_original -@ "$EARGFILES/exif2xmp.args" -@ "$EARGFILES/iptc2xmp.args" -@  "$IPTC2PNGARGS" "-XMP-dc:Title<IPTC:Headline" "${1%.*}.temp.png"
 	$CJPEG -quant-table 2 -quality 95 -fastcrush -outfile "${1%.*}.jpg" "${1%.*}.temp.png"
 
 	
