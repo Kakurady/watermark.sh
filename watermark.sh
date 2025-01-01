@@ -138,9 +138,9 @@ doIt() {
 	# but I can't tell differences after looking at too many photos
 	# quant table 2 was personal pref; no discernable difference from
 	# table 0 at the same quality factor
-	$CONVERT "$watermarked_image" -gamma .45455 -resize 1200x960 -gamma 2.2 -quality 3 "watermarked/${1%.*}_resized.png"
+	$CONVERT "$watermarked_image" -scale 1200x960 -colorspace sRGB -quality 3 "resized/${1%.*}_resized.png"
 	rm "$watermarked_image"
-	$CJPEG -quant-table 2 -quality 92.5 -outfile "watermarked/${1%.*}_medium.jpg" "watermarked/${1%.*}_resized.png"
+	$CJPEG -quant-table 2 -quality 92.5 -outfile "resized/${1%.*}_medium.jpg" "resized/${1%.*}_resized.png"
 	
 	#test subsampling modes
 	#$CJPEG -quant-table 2 -quality 87 -sample 1x1 -outfile "resized_87_1x1/${1%.*}_1.jpg" "resized/${1%.*}_resized.png"
@@ -154,17 +154,17 @@ doIt() {
     #convert "resized/${1%.*}_resized.png" "resized/${1%.*}_resized.png"
     if [ "$report_dssim" -a -f "$DSSIM" ]
     then
-        report_ssim "watermarked/${1%.*}_resized.png" "watermarked/${1%.*}_medium.jpg" "resized_87_1x1/${1%.*}_1.jpg" "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
+        report_ssim "resized/${1%.*}_resized.png" "resized/${1%.*}_medium.jpg" "resized_87_1x1/${1%.*}_1.jpg" "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
     fi
 
-	rm "watermarked/${1%.*}_resized.png" #"resized/${1%.*}_resized.png"
+	rm "resized/${1%.*}_resized.png" "resized/${1%.*}_2k.png"
 	
 
 	#add exif tags
 	#
 	#May need to add color space if not sRGB. However, that bloats image (by 6kb)
 	#if only we could insert the PNG built-in sRGB chunk from RawTherapee?
-	$EXIFTOOL -ignoreMinorErrors -use MWG -charset iptc=UTF8 -tagsFromFile "$1" -icc_profile -all -exif:serialnumber= -exif:lensserialnumber= -MakerNotes:all= -overwrite_original "${1%.*}.jpg" "watermarked/${1%.*}_medium.jpg" "watermarked/${1%.*}_large.jpg"
+	$EXIFTOOL -ignoreMinorErrors -use MWG -charset iptc=UTF8 -tagsFromFile "$1" -icc_profile -all -exif:serialnumber= -exif:lensserialnumber= -MakerNotes:all= -overwrite_original "${1%.*}.jpg" "resized/${1%.*}_medium.jpg" "watermarked/${1%.*}_large.jpg"
 	# "resized_87_1x1/${1%.*}_1.jpg"  "resized_92_212/${1%.*}_2.jpg" "resized_92_p93/${1%.*}_p.jpg" "resized_92_p87/${1%.*}_q.jpg"
 	
 #	$CWEBP -lossless -z 6 -metadata all -o "webp/${1%.*}.webp" -- "$1"
